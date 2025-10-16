@@ -1,3 +1,60 @@
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "sleap-anipose"
+dynamic = ["version"]
+description = "SLEAP to Anipose triangulation pipeline for 3D multi-animal pose tracking."
+readme = { file = "README.md", content-type = "text/markdown" }
+authors = [
+    { name = "Sean Afshar", email = "safshar@salk.edu" },
+]
+maintainers = [
+    { name = "Talmo Pereira", email = "talmo@salk.edu" },
+]
+license = { file = "LICENSE" }
+keywords = ["sleap", "pose tracking", "pose estimation", "behavior"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "matplotlib",
+    "h5py",
+    "imageio",
+    "imageio-ffmpeg",
+    "opencv-contrib-python",
+    "aniposelib",
+    "click",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "black",
+    "pydocstyle",
+    "toml",
+    "twine",
+    "build",
+]
+
+[project.urls]
+Homepage = "https://github.com/talmolab/sleap-anipose"
+
+[project.scripts]
+slap-calibrate = "sleap_anipose.calibration:calibrate_cli"
+slap-triangulate = "sleap_anipose.triangulation:triangulate_cli"
+slap-write_board = "sleap_anipose.calibration:write_board_cli"
+slap-draw_board = "sleap_anipose.calibration:draw_board_cli"
+slap-reproject = "sleap_anipose.triangulation:reproject_cli"
+
+[tool.setuptools.dynamic]
+version = { attr = "sleap_anipose.__version__" }
+
+[tool.setuptools.packages.find]
+exclude = ["tests*", "docs*"]
+
+[tool.pydocstyle]
+convention = "google"
+match-dir = "sleap_anipose"
