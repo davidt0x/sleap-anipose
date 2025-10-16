@@ -497,11 +497,20 @@ def draw_board(
             ARUCO_DICTS[(marker_bits, dict_size)]
         )
 
-    charuco_board = aruco.CharucoBoard_create(
-        board_x, board_y, square_length, marker_length, aruco_dict
-    )
+    if hasattr(aruco, "CharucoBoard_create"):
+        charuco_board = aruco.CharucoBoard_create(
+            board_x, board_y, square_length, marker_length, aruco_dict
+        )
+    else:
+        # Newer OpenCV versions expose CharucoBoard as a constructor instead of a factory.
+        charuco_board = aruco.CharucoBoard(
+            (board_x, board_y), square_length, marker_length, aruco_dict
+        )
 
-    imboard = charuco_board.draw((img_width, img_height))
+    if hasattr(charuco_board, "draw"):
+        imboard = charuco_board.draw((img_width, img_height))
+    else:
+        imboard = charuco_board.generateImage((img_width, img_height))
     cv2.imwrite(board_name, imboard)
 
     if save:

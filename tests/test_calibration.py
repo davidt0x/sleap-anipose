@@ -3,6 +3,7 @@
 import toml
 from pathlib import Path
 
+import cv2
 import h5py
 import numpy as np
 import pytest
@@ -226,6 +227,42 @@ def test_write_board(tmp_path, board_toml):
     assert Path(board_path).exists()
 
     read_board_and_assert(board_path=board_path, is_charuco=board_toml == "board.toml")
+
+
+def test_draw_board(tmp_path):
+    board_path = tmp_path / "charuco_board.jpg"
+    board_toml_path = tmp_path / "charuco_board.toml"
+
+    board_x = 5
+    board_y = 7
+    square_length = 0.04
+    marker_length = 0.02
+    marker_bits = 5
+    dict_size = 50
+    img_width = 800
+    img_height = 600
+
+    draw_board(
+        board_name=board_path.as_posix(),
+        board_x=board_x,
+        board_y=board_y,
+        square_length=square_length,
+        marker_length=marker_length,
+        marker_bits=marker_bits,
+        dict_size=dict_size,
+        img_width=img_width,
+        img_height=img_height,
+        save=board_toml_path.as_posix(),
+    )
+
+    assert board_path.exists()
+    image = cv2.imread(board_path.as_posix())
+    assert image is not None
+    assert image.shape[0] == img_height
+    assert image.shape[1] == img_width
+
+    assert board_toml_path.exists()
+    read_board_and_assert(board_path=board_toml_path.as_posix(), is_charuco=True)
 
 
 @pytest.mark.parametrize(
